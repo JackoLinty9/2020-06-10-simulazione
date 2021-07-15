@@ -7,6 +7,7 @@ package it.polito.tdp.imdb;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.imdb.model.Actor;
 import it.polito.tdp.imdb.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -35,10 +36,10 @@ public class FXMLController {
     private Button btnSimulazione; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxGenere"
-    private ComboBox<?> boxGenere; // Value injected by FXMLLoader
+    private ComboBox<String> boxGenere; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxAttore"
-    private ComboBox<?> boxAttore; // Value injected by FXMLLoader
+    private ComboBox<Actor> boxAttore; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtGiorni"
     private TextField txtGiorni; // Value injected by FXMLLoader
@@ -48,12 +49,24 @@ public class FXMLController {
 
     @FXML
     void doAttoriSimili(ActionEvent event) {
-
+    	txtResult.clear();
+    	String res=model.getRaggiungibili(boxAttore.getValue());
+    	txtResult.appendText("Attori simili a "+boxAttore.getValue()+":\n");
+    	txtResult.appendText(res);
     }
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-
+    	txtResult.clear();
+    	if(boxGenere.getValue()==null) {
+    		txtResult.appendText("Selezionare un genere di film!");
+    		return;
+    	}
+    	model.creaGrafo(boxGenere.getValue());
+    	boxAttore.getItems().addAll(model.listaAttoriVertici());
+    	txtResult.appendText("Grafo creato");
+    	txtResult.appendText("Numero di vertici: "+model.getNVertici());
+    	txtResult.appendText("\nNumero di archi: "+model.getNArchi());
     }
 
     @FXML
@@ -75,5 +88,6 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	boxGenere.getItems().addAll(model.getAllGenres());
     }
 }
